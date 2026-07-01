@@ -1,0 +1,7 @@
+- `[x]` Update `src/lib/lemma/queries.ts` to fetch career scores correctly.
+- `[x]` Update `src/routes/index.tsx` to pass resumes and jobs correctly to components.
+- `[x]` Fix data mapping in `src/features/planner/components/PlannerSkills.tsx`.
+- `[x]` Fix priority string casing in `src/features/planner/components/PlannerRoadmap.tsx`.
+- `[x]` Fix job role vs title binding in `src/features/planner/components/PlannerHero.tsx`.
+- `[x]` Run TypeScript type checking.
+- `[x]` Run `npm run build` and ensure zero errors.

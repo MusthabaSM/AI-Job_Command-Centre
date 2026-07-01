@@ -1,0 +1,8 @@
+{
+  "name": "normalize_resume",
+  "description": "Normalizes raw resume extraction data into standardized structures.",
+  "type": "API",
+  "visibility": "POD",
+  "code": { "$file": "code.py" },
+  "permissions": { "grants": [] }
+}

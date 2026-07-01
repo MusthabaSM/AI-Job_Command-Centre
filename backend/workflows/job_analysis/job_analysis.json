@@ -1,0 +1,17 @@
+{
+  "name": "job_analysis",
+  "description": "Analyzes job descriptions against resumes to find skill gaps.",
+  "start": { "type": "DATASTORE_EVENT", "config": { "table_name": "applications", "event_type": "INSERT" } },
+  "nodes": [
+    { "id": "matcher", "type": "AGENT", "label": "Job Matcher", "config": { "agent_name": "job_matcher" } },
+    { "id": "planner", "type": "AGENT", "label": "Career Planner", "config": { "agent_name": "career_planner" } },
+    { "id": "notifier", "type": "AGENT", "label": "Notification Manager", "config": { "agent_name": "notification_manager" } },
+    { "id": "end", "type": "END", "label": "Done" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "matcher", "target": "planner" },
+    { "id": "e2", "source": "planner", "target": "notifier" },
+    { "id": "e3", "source": "notifier", "target": "end" }
+  ],
+  "visibility": "POD"
+}

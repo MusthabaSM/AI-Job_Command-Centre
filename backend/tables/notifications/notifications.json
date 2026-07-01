@@ -1,0 +1,15 @@
+{
+  "name": "notifications",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "visibility": "POD",
+  "columns": [
+    { "name": "title", "type": "TEXT" },
+    { "name": "message", "type": "TEXT" },
+    { "name": "type", "type": "ENUM", "options": ["alert", "reminder", "info", "success"] },
+    { "name": "is_read", "type": "BOOLEAN" },
+    { "name": "action_link", "type": "TEXT" },
+    { "name": "agent_source", "type": "TEXT" }
+  ],
+  "config": {}
+}

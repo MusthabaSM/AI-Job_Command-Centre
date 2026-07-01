@@ -1,0 +1,19 @@
+{
+  "name": "applications",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "visibility": "POD",
+  "columns": [
+    { "name": "job_id", "type": "UUID", "foreign_key": { "references": "jobs.id" } },
+    { "name": "resume_id", "type": "UUID", "foreign_key": { "references": "resumes.id" } },
+    { "name": "status", "type": "ENUM", "options": ["saved", "applied", "online_assessment", "interview", "hr_round", "offered", "rejected"] },
+    { "name": "match_score", "type": "FLOAT" },
+    { "name": "missing_skills", "type": "JSON" },
+    { "name": "recruiter_notes", "type": "TEXT" },
+    { "name": "applied_date", "type": "DATE" },
+    { "name": "follow_up_date", "type": "DATE" },
+    { "name": "follow_up_notes", "type": "TEXT" },
+    { "name": "agent_status", "type": "ENUM", "options": ["pending", "analyzing", "completed", "error"] }
+  ],
+  "config": {}
+}

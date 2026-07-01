@@ -1,0 +1,10 @@
+{
+  "name": "calculate_career_score",
+  "description": "Calculates overall career scores across resume, applications, interviews, and tasks.",
+  "type": "API",
+  "visibility": "POD",
+  "code": { "$file": "code.py" },
+  "permissions": { "grants": [
+    { "resource_type": "datastore_table", "resource_name": "career_scores", "permission_ids": ["datastore.table.read", "datastore.record.write"] }
+  ] }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "career_health_monitor",
+  "description": "Daily scheduled workflow to assess career readiness.",
+  "start": { "type": "SCHEDULED", "config": { "schedule_type": "CRON", "cron": "0 9 * * *" } },
+  "nodes": [
+    { "id": "planner", "type": "AGENT", "label": "Career Planner", "config": { "agent_name": "career_planner" } },
+    { "id": "notifier", "type": "AGENT", "label": "Notification Manager", "config": { "agent_name": "notification_manager" } },
+    { "id": "end", "type": "END", "label": "Done" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "planner", "target": "notifier" },
+    { "id": "e2", "source": "notifier", "target": "end" }
+  ],
+  "visibility": "POD"
+}

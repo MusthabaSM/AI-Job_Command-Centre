@@ -1,0 +1,8 @@
+{
+  "name": "calculate_job_match",
+  "description": "Calculates match score between a resume and a job description.",
+  "type": "API",
+  "visibility": "POD",
+  "code": { "$file": "code.py" },
+  "permissions": { "grants": [] }
+}

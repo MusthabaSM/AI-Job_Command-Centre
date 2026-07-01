@@ -1,0 +1,14 @@
+{
+  "name": "career_tasks",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "visibility": "POD",
+  "columns": [
+    { "name": "title", "type": "TEXT" },
+    { "name": "description", "type": "TEXT" },
+    { "name": "priority", "type": "ENUM", "options": ["low", "medium", "high"] },
+    { "name": "completed", "type": "BOOLEAN" },
+    { "name": "due_date", "type": "DATE" }
+  ],
+  "config": {}
+}

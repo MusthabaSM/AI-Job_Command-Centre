@@ -1,0 +1,15 @@
+{
+  "name": "interviews",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "visibility": "POD",
+  "columns": [
+    { "name": "application_id", "type": "UUID", "foreign_key": { "references": "applications.id" } },
+    { "name": "interview_date", "type": "DATE" },
+    { "name": "interview_type", "type": "ENUM", "options": ["technical", "hr", "managerial"] },
+    { "name": "generated_questions", "type": "JSON" },
+    { "name": "preparation_notes", "type": "TEXT" },
+    { "name": "agent_status", "type": "ENUM", "options": ["pending", "generating", "ready", "error"] }
+  ],
+  "config": {}
+}

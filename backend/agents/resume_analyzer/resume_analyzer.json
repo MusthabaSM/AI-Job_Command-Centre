@@ -1,0 +1,21 @@
+{
+  "name": "resume_analyzer",
+  "description": "Reads uploaded resumes, extracts data, and calculates initial scores.",
+  "instruction": { "$file": "instruction.md" },
+  "toolsets": ["POD"],
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "resumes",
+        "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"]
+      },
+      {
+        "resource_type": "folder",
+        "resource_name": "/resumes",
+        "permission_ids": ["folder.read"]
+      }
+    ]
+  }
+}

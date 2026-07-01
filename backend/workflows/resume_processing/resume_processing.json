@@ -1,0 +1,19 @@
+{
+  "name": "resume_processing",
+  "description": "Processes uploaded resumes through analyzer, optimizer, and planner.",
+  "start": { "type": "DATASTORE_EVENT", "config": { "table_name": "resumes", "operations": ["INSERT", "UPDATE"] } },
+  "nodes": [
+    { "id": "analyzer", "type": "AGENT", "label": "Resume Analyzer", "config": { "agent_name": "resume_analyzer" } },
+    { "id": "optimizer", "type": "AGENT", "label": "ATS Optimizer", "config": { "agent_name": "ats_optimizer" } },
+    { "id": "planner", "type": "AGENT", "label": "Career Planner", "config": { "agent_name": "career_planner" } },
+    { "id": "notifier", "type": "AGENT", "label": "Notification Manager", "config": { "agent_name": "notification_manager" } },
+    { "id": "end", "type": "END", "label": "Done" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "analyzer", "target": "optimizer" },
+    { "id": "e2", "source": "optimizer", "target": "planner" },
+    { "id": "e3", "source": "planner", "target": "notifier" },
+    { "id": "e4", "source": "notifier", "target": "end" }
+  ],
+  "visibility": "POD"
+}

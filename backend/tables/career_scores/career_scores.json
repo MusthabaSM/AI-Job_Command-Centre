@@ -1,0 +1,14 @@
+{
+  "name": "career_scores",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "visibility": "POD",
+  "columns": [
+    { "name": "resume_score", "type": "FLOAT" },
+    { "name": "interview_score", "type": "FLOAT" },
+    { "name": "application_score", "type": "FLOAT" },
+    { "name": "overall_score", "type": "FLOAT" },
+    { "name": "recommendations", "type": "JSON" }
+  ],
+  "config": {}
+}

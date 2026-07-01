@@ -1,0 +1,22 @@
+{
+  "name": "resumes",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "visibility": "POD",
+  "columns": [
+    { "name": "title", "type": "TEXT" },
+    { "name": "file_path", "type": "FILE_PATH" },
+    { "name": "version", "type": "INTEGER" },
+    { "name": "is_primary", "type": "BOOLEAN" },
+    { "name": "raw_text", "type": "TEXT" },
+    { "name": "extracted_skills", "type": "JSON" },
+    { "name": "projects", "type": "JSON" },
+    { "name": "education", "type": "JSON" },
+    { "name": "experience", "type": "JSON" },
+    { "name": "certifications", "type": "JSON" },
+    { "name": "overall_score", "type": "FLOAT" },
+    { "name": "agent_status", "type": "ENUM", "options": ["pending", "processing", "completed", "error"] },
+    { "name": "agent_notes", "type": "TEXT" }
+  ],
+  "config": {}
+}

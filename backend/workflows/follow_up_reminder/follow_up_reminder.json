@@ -1,0 +1,13 @@
+{
+  "name": "follow_up_reminder",
+  "description": "Daily scheduled workflow to generate application follow-up reminders.",
+  "start": { "type": "SCHEDULED", "config": { "schedule_type": "CRON", "cron": "0 10 * * *" } },
+  "nodes": [
+    { "id": "notifier", "type": "AGENT", "label": "Notification Manager", "config": { "agent_name": "notification_manager" } },
+    { "id": "end", "type": "END", "label": "Done" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "notifier", "target": "end" }
+  ],
+  "visibility": "POD"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "jobs",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "visibility": "POD",
+  "columns": [
+    { "name": "company", "type": "TEXT" },
+    { "name": "role", "type": "TEXT" },
+    { "name": "description", "type": "TEXT" },
+    { "name": "required_skills", "type": "JSON" },
+    { "name": "location", "type": "TEXT" },
+    { "name": "experience_required", "type": "TEXT" },
+    { "name": "source", "type": "TEXT" },
+    { "name": "url", "type": "TEXT" },
+    { "name": "salary_range", "type": "TEXT" },
+    { "name": "agent_status", "type": "ENUM", "options": ["pending", "processing", "completed", "error"] }
+  ],
+  "config": {}
+}

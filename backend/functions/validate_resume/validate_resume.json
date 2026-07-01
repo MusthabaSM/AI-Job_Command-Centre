@@ -1,0 +1,8 @@
+{
+  "name": "validate_resume",
+  "description": "Validates resume extraction data for completeness and quality.",
+  "type": "API",
+  "visibility": "POD",
+  "code": { "$file": "code.py" },
+  "permissions": { "grants": [] }
+}

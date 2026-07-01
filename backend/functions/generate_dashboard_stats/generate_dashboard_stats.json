@@ -1,0 +1,13 @@
+{
+  "name": "generate_dashboard_stats",
+  "description": "Generates summary statistics for the user dashboard.",
+  "type": "API",
+  "visibility": "POD",
+  "code": { "$file": "code.py" },
+  "permissions": { "grants": [
+    { "resource_type": "datastore_table", "resource_name": "applications", "permission_ids": ["datastore.table.read"] },
+    { "resource_type": "datastore_table", "resource_name": "career_tasks", "permission_ids": ["datastore.table.read"] },
+    { "resource_type": "datastore_table", "resource_name": "interviews", "permission_ids": ["datastore.table.read"] },
+    { "resource_type": "datastore_table", "resource_name": "notifications", "permission_ids": ["datastore.table.read"] }
+  ] }
+}
