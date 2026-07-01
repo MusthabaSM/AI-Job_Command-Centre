@@ -1,6 +1,6 @@
 import { SectionCard } from "@/components/shared/Cards";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, Clock, AlertCircle } from "lucide-react";
+import { ArrowUpRight, Clock, AlertCircle, Target } from "lucide-react";
 
 const RoadmapItem = ({ title, priority, difficulty, impact, time }: any) => (
   <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4.5 border border-border rounded-xl bg-background shadow-sm hover:border-indigo-500/30 hover:shadow-md hover:bg-muted/20 transition-all duration-300">
@@ -20,6 +20,18 @@ const RoadmapItem = ({ title, priority, difficulty, impact, time }: any) => (
 );
 
 export function PlannerRoadmap({ tasks = [] }: { tasks?: any[] }) {
+  if (!tasks || tasks.length === 0) {
+    return (
+      <SectionCard title="AI Strategic Roadmap" description="Your personalized path to maximum hireability." className="col-span-full xl:col-span-2 h-full">
+        <div className="flex flex-col items-center justify-center h-[calc(100%-60px)] min-h-[300px] border border-dashed border-border bg-muted/5 rounded-xl p-12 text-center mt-4">
+          <Target className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
+          <h3 className="text-lg font-medium text-foreground mb-1">No Career Tasks Generated</h3>
+          <p className="text-sm text-muted-foreground max-w-sm mx-auto">Upload a resume and analyze jobs to let AI generate a strategic roadmap of actionable tasks.</p>
+        </div>
+      </SectionCard>
+    );
+  }
+
   const immediate = tasks.filter(t => t.priority?.toLowerCase() === "critical" || t.priority?.toLowerCase() === "high");
   const thisWeek = tasks.filter(t => t.priority?.toLowerCase() === "medium");
   const longTerm = tasks.filter(t => t.priority?.toLowerCase() === "low");

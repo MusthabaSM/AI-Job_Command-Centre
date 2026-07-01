@@ -1,0 +1,8 @@
+{
+  "name": "ai_gateway",
+  "description": "Secure AI Gateway for frontend AI requests. Handles fallback, model selection, and execution without exposing API keys to the browser.",
+  "type": "API",
+  "visibility": "PUBLIC",
+  "code": { "$file": "code.py" },
+  "permissions": { "grants": [] }
+}

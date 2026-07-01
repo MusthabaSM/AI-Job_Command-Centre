@@ -6,23 +6,12 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { 
   ProfileSection, 
-  AIPrefSection, 
-  IntegrationsSection, 
-  SecuritySection, 
-  PlaceholderSection 
+  AIPrefSection 
 } from "./SettingsSections";
 
 const CATEGORIES = [
   { id: "profile", label: "Profile" },
-  { id: "career", label: "Career Goals" },
   { id: "ai", label: "AI Preferences" },
-  { id: "resume", label: "Resume Preferences" },
-  { id: "interview", label: "Interview Preferences" },
-  { id: "notifications", label: "Notifications" },
-  { id: "integrations", label: "Integrations" },
-  { id: "appearance", label: "Appearance" },
-  { id: "security", label: "Security" },
-  { id: "about", label: "About" },
 ];
 
 export function SettingsLayout() {
@@ -52,8 +41,6 @@ export function SettingsLayout() {
     setIsDirty(true);
   };
 
-  const handleSimulateChange = () => setIsDirty(true);
-
   const handleSave = () => {
     try {
       localStorage.setItem("alchemist_profile", JSON.stringify(profileData));
@@ -67,9 +54,7 @@ export function SettingsLayout() {
     switch (activeTab) {
       case "profile": return <ProfileSection data={profileData} onChange={handleProfileChange} onSave={handleSave} />;
       case "ai": return <AIPrefSection data={aiData} onChange={handleAiChange} onSave={handleSave} />;
-      case "integrations": return <div onClick={handleSimulateChange}><IntegrationsSection /></div>;
-      case "security": return <div onClick={handleSimulateChange}><SecuritySection /></div>;
-      default: return <PlaceholderSection title={activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} />;
+      default: return <ProfileSection data={profileData} onChange={handleProfileChange} onSave={handleSave} />;
     }
   };
 

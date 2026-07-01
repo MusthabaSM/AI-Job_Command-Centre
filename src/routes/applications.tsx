@@ -34,10 +34,7 @@ function CareerPipeline() {
         description="Actively manage your job applications and interview lifecycle."
         action={
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Mail className="h-4 w-4 mr-2" /> Follow-up Email
-            </Button>
-            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all">
               <Plus className="h-4 w-4 mr-2" /> Add Application
             </Button>
           </div>

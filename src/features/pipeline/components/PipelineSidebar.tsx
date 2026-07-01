@@ -3,6 +3,7 @@ import { Timeline, TimelineItem } from "@/components/shared/Timeline";
 import { Button } from "@/components/ui/button";
 import { BrainCircuit, Mail, PenTool, CheckCircle, ShieldAlert } from "lucide-react";
 import { SkillBadge } from "@/components/shared/Badges";
+import { Link } from "@tanstack/react-router";
 
 export function PipelineSidebar({ selectedApp }: { selectedApp: any }) {
   if (!selectedApp) {
@@ -30,12 +31,14 @@ export function PipelineSidebar({ selectedApp }: { selectedApp: any }) {
           </h4>
           <p className="text-sm text-foreground/90 leading-relaxed relative z-10 font-medium">
             {(selectedApp.status || selectedApp.stage) === "Technical Interview" 
-              ? "Start Mock Interview covering System Design and Next.js optimization."
-              : "Generate a follow-up email to the recruiter."}
+              ? "Start a Mock Interview covering System Design and specific requirements."
+              : "Review your application strategy with the Career Planner."}
           </p>
-          <Button size="sm" className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 relative z-10">
-            {(selectedApp.status || selectedApp.stage) === "Technical Interview" ? "Prepare Interview" : "Draft Email"}
-          </Button>
+          <Link to="/workspace">
+            <Button size="sm" className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 relative z-10">
+              {(selectedApp.status || selectedApp.stage) === "Technical Interview" ? "Start Mock Interview" : "Open Mission Control"}
+            </Button>
+          </Link>
         </div>
 
         <div>

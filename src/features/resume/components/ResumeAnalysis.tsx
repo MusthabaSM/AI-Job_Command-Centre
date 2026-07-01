@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { SectionCard } from "@/components/shared/Cards";
-import { ChevronDown, ChevronUp, CheckCircle2 } from "lucide-react";
+import { ChevronDown, ChevronUp, CheckCircle2, FileSearch } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SkillBadge } from "@/components/shared/Badges";
 
@@ -45,9 +45,11 @@ const CollapsibleCard = ({ title, children, confidence }: { title: string, child
 export function ResumeAnalysis({ resume }: { resume?: any }) {
   if (!resume) {
     return (
-      <SectionCard title="Resume Analysis" description="Structured data extracted by the AI Resume Analyzer." className="h-full">
-        <div className="mt-4 flex flex-col items-center justify-center h-48 text-muted-foreground border border-dashed rounded-xl">
-          <p>No resume selected.</p>
+      <SectionCard title="Resume Analysis" description="Structured data extracted by the AI Resume Analyzer." className="h-full bg-muted/5 border-dashed">
+        <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-12 text-center min-h-[300px]">
+          <FileSearch className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
+          <h3 className="text-lg font-medium text-foreground mb-1">Waiting for Resume</h3>
+          <p className="text-sm">Select a resume from your library to view the parsed skills, experience, and education.</p>
         </div>
       </SectionCard>
     );

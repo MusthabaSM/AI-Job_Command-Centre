@@ -5,9 +5,11 @@ import { ScoreBadge, SkillBadge } from "@/components/shared/Badges";
 export function AIInsights({ resume }: { resume?: any }) {
   if (!resume) {
     return (
-      <SectionCard title="AI Insights" className="h-full bg-muted/10">
-        <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-          No insights available.
+      <SectionCard title="AI Insights" className="h-full bg-muted/5 border-dashed">
+        <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-12 text-center">
+          <Lightbulb className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
+          <h3 className="text-lg font-medium text-foreground mb-1">No Resume Selected</h3>
+          <p className="text-sm">Select a resume to view AI-generated insights, scoring, and analysis notes.</p>
         </div>
       </SectionCard>
     );

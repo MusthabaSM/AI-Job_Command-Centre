@@ -72,9 +72,19 @@ function DroppableColumn({ stage, apps, onSelectApp }: { stage: string, apps: an
       
       <div className="flex-1 p-3 overflow-y-auto space-y-3">
         <AnimatePresence>
-          {apps.map(app => (
-            <DraggableCard key={app.id} app={app} onSelectApp={onSelectApp} />
-          ))}
+          {apps.length === 0 ? (
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              className="flex flex-col items-center justify-center h-24 border border-dashed border-border/50 rounded-lg text-center bg-muted/5"
+            >
+              <p className="text-xs text-muted-foreground font-medium">Drop here</p>
+            </motion.div>
+          ) : (
+            apps.map(app => (
+              <DraggableCard key={app.id} app={app} onSelectApp={onSelectApp} />
+            ))
+          )}
         </AnimatePresence>
       </div>
     </div>

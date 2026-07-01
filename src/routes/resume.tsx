@@ -159,10 +159,7 @@ function AIResumeStudio() {
         description="Upload, analyze, and optimize your resumes with AI."
         action={
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => toast("Exporting...")}>
-              <Download className="h-4 w-4 mr-2" /> Export
-            </Button>
-            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all" onClick={() => setActiveTab('ats')} disabled={!activeResume}>
               <Sparkles className="h-4 w-4 mr-2" /> Optimize Resume
             </Button>
           </div>
@@ -223,14 +220,17 @@ function AIResumeStudio() {
             
             {activeTab === 'analysis' && <ResumeAnalysis resume={activeResume} />}
             {activeTab === 'ats' && (
-              <div className="flex flex-col items-center justify-center h-full border rounded-xl border-dashed p-12 text-center text-muted-foreground">
-                <FileSearch className="h-8 w-8 mb-4 text-slate-400" />
-                <p>ATS recommendations will appear here.</p>
+              <div className="flex flex-col items-center justify-center h-full border rounded-xl border-dashed p-12 text-center text-muted-foreground bg-muted/5">
+                <FileSearch className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
+                <h3 className="text-lg font-medium text-foreground mb-1">ATS Optimization</h3>
+                <p className="text-sm max-w-sm">{!activeResume ? 'Select a resume from your library to generate ATS suggestions.' : 'No ATS recommendations generated yet. Click "Optimize Resume" to begin.'}</p>
               </div>
             )}
             {activeTab === 'history' && (
-               <div className="flex flex-col items-center justify-center h-full border rounded-xl border-dashed p-12 text-center text-muted-foreground">
-                 <p>No optimization history for this version.</p>
+               <div className="flex flex-col items-center justify-center h-full border rounded-xl border-dashed p-12 text-center text-muted-foreground bg-muted/5">
+                 <RefreshCcw className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
+                 <h3 className="text-lg font-medium text-foreground mb-1">Optimization History</h3>
+                 <p className="text-sm max-w-sm">{!activeResume ? 'Select a resume to view its optimization history.' : 'No optimization history found for this version.'}</p>
                </div>
             )}
           </div>

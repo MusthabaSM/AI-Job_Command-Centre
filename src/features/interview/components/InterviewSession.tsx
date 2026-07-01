@@ -17,13 +17,19 @@ export function InterviewSession({ interview }: { interview?: any }) {
   const handleSend = async () => {
     if (!input.trim() || runAgent.isPending) return;
     const userMessage = { id: Date.now(), role: "user", content: input };
+    
+    // Grab the last 5 messages for history before adding the new one
+    const recentHistory = messages.slice(-5).map(m => ({ role: m.role, content: m.content }));
+    
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     
     try {
       const response: any = await runAgent.mutateAsync({ 
         agentId: "interview_coach", 
-        input: input 
+        input: input,
+        contextData: interview,
+        history: recentHistory
       });
       setMessages(prev => [...prev, { 
         id: Date.now(), 

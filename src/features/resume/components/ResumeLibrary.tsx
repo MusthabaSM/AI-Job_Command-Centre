@@ -64,9 +64,15 @@ export function ResumeLibrary({
 
       <div className="mt-8 space-y-3">
         {isLoading ? (
-          <div className="text-sm text-muted-foreground text-center py-6 bg-muted/10 rounded-xl border border-dashed border-border">Loading resumes...</div>
+          <div className="flex flex-col items-center justify-center py-10 bg-muted/5 rounded-xl border border-dashed border-border">
+            <span className="text-sm text-muted-foreground animate-pulse">Loading resumes...</span>
+          </div>
         ) : resumes.length === 0 ? (
-          <div className="text-sm text-muted-foreground text-center py-6 bg-muted/10 rounded-xl border border-dashed border-border">No resumes found. Upload one to begin.</div>
+          <div className="flex flex-col items-center justify-center py-12 bg-muted/5 rounded-xl border border-dashed border-border text-center">
+            <File className="h-10 w-10 text-muted-foreground/30 mb-3" />
+            <h4 className="text-sm font-semibold text-foreground">No resumes found</h4>
+            <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">Upload a PDF resume to start analyzing your skills.</p>
+          </div>
         ) : (
           resumes.map((resume) => {
             const isActive = resume.id === activeResumeId;

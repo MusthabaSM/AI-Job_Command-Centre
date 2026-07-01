@@ -48,12 +48,6 @@ export function JobInput({ onAnalyze, isLoading }: { onAnalyze: (p: { title: str
         >
           <Link className="h-3 w-3 inline mr-1.5" /> Import URL
         </button>
-        <button 
-          onClick={() => setActiveTab("upload")}
-          className={cn("text-[10px] uppercase tracking-wider font-bold px-4 py-2 rounded-lg transition-colors", activeTab === "upload" ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground")}
-        >
-          <Upload className="h-3 w-3 inline mr-1.5" /> Upload PDF
-        </button>
       </div>
 
       {activeTab === "paste" && (
@@ -129,7 +123,6 @@ export function JobInput({ onAnalyze, isLoading }: { onAnalyze: (p: { title: str
         >
           {isLoading ? "Processing..." : "Analyze Job"}
         </Button>
-        <Button variant="outline" className="flex-1 shadow-sm">Save Job</Button>
       </div>
     </SectionCard>
   );

@@ -257,10 +257,10 @@ function JobIntelligenceStudio() {
             )}
 
             {!hasAnalyzed && !isAnalyzing && (
-              <div className="flex flex-col items-center justify-center h-full min-h-[400px] border rounded-xl border-dashed p-12 text-center text-muted-foreground">
-                <Briefcase className="h-10 w-10 mb-4 text-indigo-400" />
-                <p className="font-semibold text-foreground text-sm">Job Intelligence Studio</p>
-                <p className="text-sm mt-2 max-w-xs mx-auto">Paste a job description in the left panel. AI will compare it against your resume and identify skill gaps, match scores, and improvement areas.</p>
+              <div className="flex flex-col items-center justify-center h-full min-h-[400px] border rounded-xl border-dashed bg-muted/5 p-12 text-center text-muted-foreground">
+                <Briefcase className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
+                <h3 className="text-lg font-medium text-foreground mb-1">Waiting for Job Analysis</h3>
+                <p className="text-sm max-w-sm">Paste a job description in the left panel. AI will compare it against your resume and identify skill gaps, match scores, and improvement areas.</p>
               </div>
             )}
             
@@ -305,7 +305,8 @@ function JobIntelligenceStudio() {
                         try {
                           const response: any = await runAgent.mutateAsync({
                             agentId: 'ats_optimizer',
-                            input: `Analyze my resume against the job description for ${matchData?.job_title || 'this role'}. Focus on missing skills like: ${(matchData?.missing_skills || []).join(', ')}. Provide 3 concrete resume bullet points.`
+                            input: "Optimize my resume for this role and generate concrete bullet points focused on my missing skills.",
+                            contextData: matchData
                           });
                           setAtsOptimizationResult(response.output);
                         } catch (e: any) {
@@ -329,10 +330,10 @@ function JobIntelligenceStudio() {
           {hasAnalyzed ? (
             <JobRecommendations matchData={matchData} />
           ) : (
-            <div className="flex flex-col items-center justify-center h-full border rounded-xl bg-muted/10 p-12 text-center text-muted-foreground">
-              <FileSearch className="h-10 w-10 mb-4 text-indigo-400" />
-              <p className="text-sm font-semibold text-foreground">AI Recommendations</p>
-              <p className="text-sm mt-2">Analyze a job above to see personalized suggestions for improving your match score.</p>
+            <div className="flex flex-col items-center justify-center h-full border rounded-xl border-dashed bg-muted/5 p-12 text-center text-muted-foreground">
+              <FileSearch className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
+              <h3 className="text-lg font-medium text-foreground mb-1">AI Recommendations</h3>
+              <p className="text-sm">Analyze a job description to see personalized suggestions for improving your match score.</p>
             </div>
           )}
         </div>
