@@ -5,13 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useRunAgent } from "@/lib/lemma/queries";
+import { useRunAgent, useResumes } from "@/lib/firebase/queries";
 
 export function InterviewSession({ interview }: { interview?: any }) {
   const [input, setInput] = useState("");
   const runAgent = useRunAgent();
+  const { data: resumes } = useResumes();
+  const activeResume = resumes?.[0];
+
   const [messages, setMessages] = useState([
-    { id: 1, role: "interviewer", content: `Welcome to your ${interview?.type || 'System Design'} Mock Interview for the ${interview?.role || interview?.position || 'Role'} role at ${interview?.company || 'Company'}. Let's get started!` }
+    { id: 1, role: "interviewer", content: `Welcome to your ${interview?.type || 'Technical'} Mock Interview for the ${interview?.role || interview?.position || 'Software Engineer'} role at ${interview?.company || 'Company'}. Let's get started!` }
   ]);
 
   const handleSend = async () => {
@@ -28,7 +31,16 @@ export function InterviewSession({ interview }: { interview?: any }) {
       const response: any = await runAgent.mutateAsync({ 
         agentId: "interview_coach", 
         input: input,
-        contextData: interview,
+        contextData: {
+          interviewDetails: interview,
+          candidateResume: {
+            title: activeResume?.title,
+            skills: activeResume?.extracted_skills || activeResume?.parsed_skills || [],
+            projects: activeResume?.projects || [],
+            education: activeResume?.education || [],
+            experience: activeResume?.experience || []
+          }
+        },
         history: recentHistory
       });
       setMessages(prev => [...prev, { 

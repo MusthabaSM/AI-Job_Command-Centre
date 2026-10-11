@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { RefreshCcw, Download, Sparkles, FileSearch } from "lucide-react";
 import { toast } from "sonner";
-import { useResumes, useAnalyzeResume } from "@/lib/lemma/queries";
+import { useResumes, useAnalyzeResume } from "@/lib/firebase/queries";
 
 function AdvancedProcessingOverlay() {
   const [phase, setPhase] = useState<'buffering' | 'progress' | 'skeleton'>('buffering');
@@ -180,9 +180,10 @@ function AIResumeStudio() {
         <ResumePipeline />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 h-[calc(100vh-320px)] min-h-[600px]">
-        {/* Left Panel - 30% */}
-        <div className="lg:col-span-3 h-full overflow-y-auto pr-2 custom-scrollbar">
+      {/* Bento Grid Layout */}
+      <div className="space-y-6 pb-16">
+        {/* Bento Cell 1 (Full Horizontal Width on Top): Resume Library */}
+        <div className="w-full">
           <ResumeLibrary 
             onUpload={handleUpload} 
             resumes={resumes || []}
@@ -192,53 +193,56 @@ function AIResumeStudio() {
           />
         </div>
 
-        {/* Center Panel - 40% */}
-        <div className="lg:col-span-4 flex flex-col h-full overflow-y-auto pr-2 custom-scrollbar">
-          <div className="flex items-center gap-4 border-b pb-2 mb-4 sticky top-0 bg-background z-10 pt-1">
-            <button 
-              className={`text-sm font-medium pb-2 border-b-2 ${activeTab === 'analysis' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-white'}`}
-              onClick={() => setActiveTab('analysis')}
-            >
-              Analysis
-            </button>
-            <button 
-              className={`text-sm font-medium pb-2 border-b-2 ${activeTab === 'ats' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-white'}`}
-              onClick={() => setActiveTab('ats')}
-            >
-              ATS Suggestions
-            </button>
-            <button 
-              className={`text-sm font-medium pb-2 border-b-2 ${activeTab === 'history' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-white'}`}
-              onClick={() => setActiveTab('history')}
-            >
-              History
-            </button>
-          </div>
-          
-          <div className="flex-1 relative min-h-[400px]">
-            {isProcessing && <AdvancedProcessingOverlay />}
+        {/* Bento Cell 2 & 3 (Side by Side Directly Below Resume Library): Resume Analysis & AI Insights */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Bento Column: Resume Analysis (Dominant Hero Section) */}
+          <div className="lg:col-span-7 xl:col-span-8 flex flex-col space-y-4 min-w-0">
+            <div className="flex items-center gap-6 border-b pb-2 mb-2 sticky top-0 bg-background/95 backdrop-blur-sm z-10 pt-1">
+              <button 
+                className={`text-sm font-semibold pb-2 border-b-2 transition-all cursor-pointer ${activeTab === 'analysis' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+                onClick={() => setActiveTab('analysis')}
+              >
+                Resume Analysis
+              </button>
+              <button 
+                className={`text-sm font-semibold pb-2 border-b-2 transition-all cursor-pointer ${activeTab === 'ats' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+                onClick={() => setActiveTab('ats')}
+              >
+                ATS Optimization
+              </button>
+              <button 
+                className={`text-sm font-semibold pb-2 border-b-2 transition-all cursor-pointer ${activeTab === 'history' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+                onClick={() => setActiveTab('history')}
+              >
+                Version History
+              </button>
+            </div>
             
-            {activeTab === 'analysis' && <ResumeAnalysis resume={activeResume} />}
-            {activeTab === 'ats' && (
-              <div className="flex flex-col items-center justify-center h-full border rounded-xl border-dashed p-12 text-center text-muted-foreground bg-muted/5">
-                <FileSearch className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
-                <h3 className="text-lg font-medium text-foreground mb-1">ATS Optimization</h3>
-                <p className="text-sm max-w-sm">{!activeResume ? 'Select a resume from your library to generate ATS suggestions.' : 'No ATS recommendations generated yet. Click "Optimize Resume" to begin.'}</p>
-              </div>
-            )}
-            {activeTab === 'history' && (
-               <div className="flex flex-col items-center justify-center h-full border rounded-xl border-dashed p-12 text-center text-muted-foreground bg-muted/5">
-                 <RefreshCcw className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
-                 <h3 className="text-lg font-medium text-foreground mb-1">Optimization History</h3>
-                 <p className="text-sm max-w-sm">{!activeResume ? 'Select a resume to view its optimization history.' : 'No optimization history found for this version.'}</p>
-               </div>
-            )}
+            <div className="flex-1 relative min-h-[500px]">
+              {isProcessing && <AdvancedProcessingOverlay />}
+              
+              {activeTab === 'analysis' && <ResumeAnalysis resume={activeResume} />}
+              {activeTab === 'ats' && (
+                <div className="flex flex-col items-center justify-center h-full min-h-[400px] border rounded-xl border-dashed p-12 text-center text-muted-foreground bg-muted/5">
+                  <FileSearch className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
+                  <h3 className="text-lg font-medium text-foreground mb-1">ATS Optimization</h3>
+                  <p className="text-sm max-w-sm">{!activeResume ? 'Select a resume from your library to generate ATS suggestions.' : 'No ATS recommendations generated yet. Click "Optimize Resume" to begin.'}</p>
+                </div>
+              )}
+              {activeTab === 'history' && (
+                 <div className="flex flex-col items-center justify-center h-full min-h-[400px] border rounded-xl border-dashed p-12 text-center text-muted-foreground bg-muted/5">
+                   <RefreshCcw className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
+                   <h3 className="text-lg font-medium text-foreground mb-1">Optimization History</h3>
+                   <p className="text-sm max-w-sm">{!activeResume ? 'Select a resume to view its optimization history.' : 'No optimization history found for this version.'}</p>
+                 </div>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Right Panel - 30% */}
-        <div className="lg:col-span-3 h-full overflow-y-auto pr-2 custom-scrollbar">
-          <AIInsights resume={activeResume} />
+          {/* Right Bento Column: AI Insights & Executive Intelligence */}
+          <div className="lg:col-span-5 xl:col-span-4 space-y-4 min-w-0">
+            <AIInsights resume={activeResume} />
+          </div>
         </div>
       </div>
     </motion.div>

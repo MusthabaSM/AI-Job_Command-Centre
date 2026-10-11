@@ -13,14 +13,16 @@ import { PipelineBoard } from "@/features/pipeline/components/PipelineBoard";
 import { PipelineSidebar } from "@/features/pipeline/components/PipelineSidebar";
 import { PipelineWorkflow } from "@/features/pipeline/components/PipelineWorkflow";
 import { PipelineCharts } from "@/features/pipeline/components/PipelineCharts";
+import { AddApplicationModal } from "@/features/pipeline/components/AddApplicationModal";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Plus, Mail } from "lucide-react";
+import { Plus } from "lucide-react";
 
-import { useApplications } from "@/lib/lemma/queries";
+import { useApplications } from "@/lib/firebase/queries";
 
 function CareerPipeline() {
   const [selectedApp, setSelectedApp] = useState<any>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { data: applications = [], isLoading } = useApplications();
 
   return (
@@ -34,7 +36,11 @@ function CareerPipeline() {
         description="Actively manage your job applications and interview lifecycle."
         action={
           <div className="flex gap-2">
-            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all">
+            <Button 
+              size="sm" 
+              onClick={() => setIsAddModalOpen(true)}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all cursor-pointer"
+            >
               <Plus className="h-4 w-4 mr-2" /> Add Application
             </Button>
           </div>
@@ -55,21 +61,33 @@ function CareerPipeline() {
         <PipelineWorkflow />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-        <div className="xl:col-span-3">
+      <div className="space-y-6">
+        {/* Full-width Single Row: Pipeline Board & 3D Circular Orbit */}
+        <div className="w-full">
           {isLoading ? (
-            <div className="h-[600px] flex items-center justify-center border rounded-xl bg-muted/10">
+            <div className="h-[560px] flex items-center justify-center border rounded-xl bg-muted/10">
               <span className="text-muted-foreground animate-pulse">Loading Pipeline...</span>
             </div>
           ) : (
             <PipelineBoard applications={applications} onSelectApp={setSelectedApp} />
           )}
+        </div>
+
+        {/* Directly Below: AI Insights Dashboard */}
+        <div className="w-full">
+          <PipelineSidebar selectedApp={selectedApp || applications[0]} />
+        </div>
+
+        {/* Pipeline Analytics Charts */}
+        <div className="w-full">
           <PipelineCharts applications={applications} />
         </div>
-        <div className="xl:col-span-1">
-          <PipelineSidebar selectedApp={selectedApp} />
-        </div>
       </div>
+
+      <AddApplicationModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+      />
     </motion.div>
   );
 }

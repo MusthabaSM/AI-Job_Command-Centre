@@ -3,7 +3,7 @@
 import { Link } from '@tanstack/react-router';
 import { useNavigate, useLocation } from '@tanstack/react-router';
 import { cn } from "@/lib/utils";
-import { demoState } from "@/lib/lemma/client";
+import { demoState } from "@/lib/firebase/client";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { title: "AI Career OS", href: "/", icon: Target },
   { title: "AI Resume Studio", href: "/resume", icon: FileText },
   { title: "Job Intelligence Studio", href: "/jobs", icon: Briefcase },

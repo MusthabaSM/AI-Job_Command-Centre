@@ -12,14 +12,15 @@ import { JobInput } from "@/features/jobs/components/JobInput";
 import { AIMatchAnalysis } from "@/features/jobs/components/AIMatchAnalysis";
 import { JobRecommendations } from "@/features/jobs/components/JobRecommendations";
 import { JobPipeline } from "@/features/jobs/components/JobPipeline";
-import { JobCharts } from "@/features/jobs/components/JobCharts";
+import { JobCharts, SkillRadarCard, MissingSkillsGapCard } from "@/features/jobs/components/JobCharts";
 import { VisualComparison } from "@/features/jobs/components/VisualComparison";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { RefreshCcw, FolderPlus, Sparkles, Mic, Briefcase, FileSearch } from "lucide-react";
+import { RefreshCcw, FolderPlus, Sparkles, Mic, Briefcase, FileSearch, Clock, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { useCreateJob, useCalculateJobMatch, useResumes, useRunAgent, useCreateApplication } from "@/lib/lemma/queries";
+import { useCreateJob, useCalculateJobMatch, useResumes, useRunAgent, useCreateApplication, useJobs } from "@/lib/firebase/queries";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 function AdvancedJobProcessingOverlay() {
   const [phase, setPhase] = useState<'buffering' | 'progress' | 'skeleton'>('buffering');
@@ -129,6 +130,54 @@ function JobIntelligenceStudio() {
   const calculateMatch = useCalculateJobMatch();
   const { data: resumes } = useResumes();
   const createApplication = useCreateApplication();
+  const { data: savedJobs = [] } = useJobs();
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+
+  // Auto-restore previously analyzed job from Firestore so records never reset
+  useEffect(() => {
+    if (!hasAnalyzed && !matchData && savedJobs.length > 0) {
+      const previouslyAnalyzed = savedJobs.find((j: any) => j.match_score) || savedJobs[0];
+      if (previouslyAnalyzed && previouslyAnalyzed.match_score) {
+        setSelectedJobId(previouslyAnalyzed.id);
+        setMatchData({
+          job_id: previouslyAnalyzed.id,
+          company: previouslyAnalyzed.company,
+          role: previouslyAnalyzed.role || previouslyAnalyzed.title,
+          match_score: previouslyAnalyzed.match_score,
+          skill_coverage: previouslyAnalyzed.skill_coverage || 80,
+          keyword_coverage: previouslyAnalyzed.keyword_coverage || 75,
+          categories: previouslyAnalyzed.categories || { "Backend & Cloud": 85, "Full-Stack": 90, "Distributed Systems": 65, "CS Fundamentals": 70 },
+          missing_skills: previouslyAnalyzed.missing_skills || ["Apache Kafka", "DSA (LeetCode)"]
+        });
+        setHasAnalyzed(true);
+      }
+    }
+  }, [savedJobs, hasAnalyzed, matchData]);
+
+  const handleSelectJob = (job: any) => {
+    setSelectedJobId(job.id);
+    setMatchData({
+      job_id: job.id,
+      company: job.company,
+      role: job.role || job.title,
+      match_score: job.match_score || 78,
+      skill_coverage: job.skill_coverage || 80,
+      keyword_coverage: job.keyword_coverage || 75,
+      categories: job.categories || { "Backend & Cloud": 85, "Full-Stack": 90, "Distributed Systems": 65, "CS Fundamentals": 70 },
+      missing_skills: job.missing_skills || ["Apache Kafka", "DSA (LeetCode)"]
+    });
+    setHasAnalyzed(true);
+    setAtsOptimizationResult(null);
+  };
+
+  const handleStartNewAnalysis = () => {
+    setSelectedJobId(null);
+    setMatchData(null);
+    setHasAnalyzed(false);
+    setAtsOptimizationResult(null);
+  };
+
+  const currentSelectedJob = selectedJobId ? savedJobs.find((j: any) => j.id === selectedJobId) : null;
 
   const handleAddToApplications = async () => {
     if (!matchData?.job_id) {
@@ -173,10 +222,11 @@ function JobIntelligenceStudio() {
       });
       
       const elapsed = Date.now() - startTime;
-      const minDuration = 12000; // Force 12 seconds to show buffering (3s), progress (7s) and skeleton (2s)
+      const minDuration = 2000; // Brief animation duration for sleek experience
       const delay = Math.max(0, minDuration - elapsed);
 
       setTimeout(() => {
+        setSelectedJobId(job.id);
         setMatchData(result);
         setHasAnalyzed(true);
         setIsAnalyzing(false);
@@ -220,6 +270,52 @@ function JobIntelligenceStudio() {
         estimatedTime="~3s per analysis"
       />
 
+      {/* Saved Analyses History Bar */}
+      {savedJobs.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-card border border-border rounded-xl shadow-xs">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5 text-indigo-500" /> Saved Analyses:
+            </span>
+            {savedJobs.map((j: any) => {
+              const isSelected = selectedJobId === j.id;
+              return (
+                <button
+                  key={j.id}
+                  onClick={() => handleSelectJob(j)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-2 shrink-0 cursor-pointer",
+                    isSelected
+                      ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
+                      : "bg-muted/40 text-foreground border-border hover:bg-muted"
+                  )}
+                >
+                  <span className="font-semibold">{j.company}</span>
+                  <span className="opacity-80">({j.role || j.title})</span>
+                  {j.match_score && (
+                    <span className={cn(
+                      "px-1.5 py-0.5 rounded text-[10px] font-bold",
+                      isSelected ? "bg-white/20 text-white" : "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                    )}>
+                      {j.match_score}%
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleStartNewAnalysis}
+            className="text-xs shrink-0 cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5 mr-1.5" /> + New Analysis
+          </Button>
+        </div>
+      )}
+
       {/* AI Pipeline Visualization */}
       {hasAnalyzed && (
         <div>
@@ -228,27 +324,35 @@ function JobIntelligenceStudio() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-260px)] min-h-[600px]">
-        {/* Left Panel - 35% */}
-        <div className="lg:col-span-4 h-full overflow-y-auto pr-2 custom-scrollbar">
-          <JobInput onAnalyze={handleAnalyze} isLoading={isAnalyzing} />
+      {/* Bento Grid Layout */}
+      <div className="space-y-6 pb-16">
+        {/* Bento Item 1: Horizontal Full-Width Job Requisition Input */}
+        <div className="w-full">
+          <JobInput onAnalyze={handleAnalyze} isLoading={isAnalyzing} selectedJob={currentSelectedJob} />
         </div>
 
-        {/* Center Panel - 40% */}
-        <div className="lg:col-span-5 flex flex-col h-full overflow-y-auto pr-2 custom-scrollbar" ref={analysisRef}>
-          <div className="flex items-center gap-4 border-b pb-2 mb-4 sticky top-0 bg-background z-10 pt-1">
-            <button 
-              className={`text-sm font-medium pb-2 border-b-2 ${activeTab === 'skill-gap' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-white'}`}
-              onClick={() => setActiveTab('skill-gap')}
-            >
-              Skill Gap Analysis
-            </button>
-            <button 
-              className={`text-sm font-medium pb-2 border-b-2 ${activeTab === 'improvements' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-white'}`}
-              onClick={() => setActiveTab('improvements')}
-            >
-              Resume Improvements
-            </button>
+        {/* Bento Item 2: Analysis Section Directly Below Job Input */}
+        <div className="space-y-5 min-w-0" ref={analysisRef}>
+          <div className="flex items-center justify-between border-b pb-2 mb-2 sticky top-0 bg-background/95 backdrop-blur-sm z-10 pt-1">
+            <div className="flex items-center gap-6">
+              <button 
+                className={`text-sm font-semibold pb-2 border-b-2 transition-all cursor-pointer ${activeTab === 'skill-gap' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+                onClick={() => setActiveTab('skill-gap')}
+              >
+                Skill Gap & Match Analysis
+              </button>
+              <button 
+                className={`text-sm font-semibold pb-2 border-b-2 transition-all cursor-pointer ${activeTab === 'improvements' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+                onClick={() => setActiveTab('improvements')}
+              >
+                Resume Improvements & ATS
+              </button>
+            </div>
+            {hasAnalyzed && (
+              <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 hidden sm:inline-flex items-center gap-1">
+                ✓ Requisition Evaluated
+              </span>
+            )}
           </div>
           
           <div className="flex-1 relative">
@@ -257,25 +361,59 @@ function JobIntelligenceStudio() {
             )}
 
             {!hasAnalyzed && !isAnalyzing && (
-              <div className="flex flex-col items-center justify-center h-full min-h-[400px] border rounded-xl border-dashed bg-muted/5 p-12 text-center text-muted-foreground">
+              <div className="flex flex-col items-center justify-center min-h-[380px] border rounded-xl border-dashed bg-muted/5 p-12 text-center text-muted-foreground">
                 <Briefcase className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
                 <h3 className="text-lg font-medium text-foreground mb-1">Waiting for Job Analysis</h3>
-                <p className="text-sm max-w-sm">Paste a job description in the left panel. AI will compare it against your resume and identify skill gaps, match scores, and improvement areas.</p>
+                <p className="text-sm max-w-sm">Paste a job description in the form above or import from a URL. AI will compare it against your resume to identify skill gaps, match scores, and interview focus areas.</p>
               </div>
             )}
             
             {hasAnalyzed && activeTab === 'skill-gap' && (
               <div className="animate-in fade-in duration-300 space-y-6">
-                <AIMatchAnalysis matchData={matchData} />
-                <VisualComparison matchData={matchData} />
-                <JobCharts matchData={matchData} />
+                {/* Action Banner: Track in Career Pipeline */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent border border-indigo-500/20 shadow-sm">
+                  <div>
+                    <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
+                      <FolderPlus className="h-4 w-4 text-indigo-500" /> Track in Career Pipeline
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Save this analyzed role directly to your applications Kanban board.
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={handleAddToApplications} 
+                    disabled={createApplication.isPending}
+                    size="sm"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shrink-0 cursor-pointer"
+                  >
+                    <FolderPlus className="h-4 w-4 mr-2" />
+                    {createApplication.isPending ? "Adding..." : "Add to Pipeline"}
+                  </Button>
+                </div>
+
+                {/* Row 1: AI Match Analysis (Left) + AI Recommendations (Right) */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                  <div className="lg:col-span-7 xl:col-span-7">
+                    <AIMatchAnalysis matchData={matchData} />
+                  </div>
+                  <div className="lg:col-span-5 xl:col-span-5">
+                    <JobRecommendations matchData={matchData} />
+                  </div>
+                </div>
+
+                {/* Row 2: Skill Category Comparison, Skill Coverage (Radar), and Missing Skills Gap in the SAME row */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
+                  <VisualComparison matchData={matchData} />
+                  <SkillRadarCard matchData={matchData} />
+                  <MissingSkillsGapCard matchData={matchData} />
+                </div>
               </div>
             )}
             
             {hasAnalyzed && activeTab === 'improvements' && (
-              <div className="h-full min-h-[400px] border rounded-xl p-6 relative">
+              <div className="h-full min-h-[450px] border rounded-xl p-6 relative bg-card shadow-xs">
                 {isOptimizing ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+                  <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground py-16">
                     <RefreshCcw className="h-8 w-8 text-amber-500 animate-spin mb-4" />
                     <p className="font-semibold text-foreground">ATS Optimizer running...</p>
                     <p className="text-sm mt-2">Generating optimized bullet points based on missing skills.</p>
@@ -289,17 +427,17 @@ function JobIntelligenceStudio() {
                       </div>
                       <Button variant="outline" size="sm" onClick={() => setAtsOptimizationResult(null)}>Reset</Button>
                     </div>
-                    <div className="prose prose-sm dark:prose-invert max-w-none bg-muted/30 p-4 rounded-lg whitespace-pre-wrap text-sm leading-relaxed border border-amber-100 dark:border-amber-900/50">
+                    <div className="prose prose-sm dark:prose-invert max-w-none bg-muted/30 p-5 rounded-xl whitespace-pre-wrap text-sm leading-relaxed border border-amber-100 dark:border-amber-900/50">
                       {atsOptimizationResult}
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground border-dashed border-2 border-muted rounded-lg m-4">
+                  <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground border-dashed border-2 border-muted rounded-xl p-12">
                     <Sparkles className="h-8 w-8 mb-4 text-amber-500" />
-                    <p>Optimize your resume with suggested phrases and bullet points.</p>
+                    <h4 className="font-semibold text-foreground mb-1">Tailor Resume with Targeted ATS Keywords</h4>
+                    <p className="text-sm max-w-md">Generate custom achievement bullets tailored to this JD to bridge your missing skills ({matchData?.missing_skills?.join(", ") || "Kafka, System Design"}).</p>
                     <Button 
-                      className="mt-4" 
-                      variant="outline"
+                      className="mt-5 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm" 
                       onClick={async () => {
                         setIsOptimizing(true);
                         try {
@@ -323,19 +461,6 @@ function JobIntelligenceStudio() {
               </div>
             )}
           </div>
-        </div>
-
-        {/* Right Panel - 25% */}
-        <div className="lg:col-span-3 h-full overflow-y-auto pr-2 custom-scrollbar">
-          {hasAnalyzed ? (
-            <JobRecommendations matchData={matchData} />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full border rounded-xl border-dashed bg-muted/5 p-12 text-center text-muted-foreground">
-              <FileSearch className="h-10 w-10 mb-4 text-slate-400 opacity-50" />
-              <h3 className="text-lg font-medium text-foreground mb-1">AI Recommendations</h3>
-              <p className="text-sm">Analyze a job description to see personalized suggestions for improving your match score.</p>
-            </div>
-          )}
         </div>
       </div>
     </motion.div>

@@ -1,7 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard')({
-  component: CareerCommandCenter,
+  beforeLoad: () => {
+    throw redirect({ to: '/' })
+  },
+  component: () => null,
 })
 
 
@@ -12,7 +15,7 @@ import { HeroSection } from "@/features/dashboard/components/HeroSection";
 import { QuickActions } from "@/features/dashboard/components/QuickActions";
 import { ChartsPanel } from "@/features/dashboard/components/ChartsPanel";
 import { AIActivity } from "@/features/dashboard/components/AIActivity";
-import { useCareerScores, useCareerTasks, useApplications, useNotifications, useJobs } from "@/lib/lemma/queries";
+import { useCareerScores, useCareerTasks, useApplications, useNotifications, useJobs } from "@/lib/firebase/queries";
 import { LoadingState } from "@/components/shared/States";
 import { motion } from "framer-motion";
 import { SkillBadge, StatusChip } from "@/components/shared/Badges";

@@ -4,13 +4,31 @@ import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { CommandPalette } from "@/components/shared/CommandPalette";
 import { useNavigate, useLocation } from '@tanstack/react-router';
+import { AuthContext } from "@/components/shared/Providers";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { session, loading } = React.useContext(AuthContext);
+
   const isAuthRoute = pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password' || pathname === '/onboarding';
+
+  React.useEffect(() => {
+    if (!loading && !session && !isAuthRoute) {
+      navigate({ to: '/login' });
+    }
+  }, [loading, session, isAuthRoute, navigate]);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   if (isAuthRoute) {
     return <>{children}</>;
+  }
+
+  if (!session) {
+    return null;
   }
 
   return (

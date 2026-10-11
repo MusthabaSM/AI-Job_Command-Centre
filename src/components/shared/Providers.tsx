@@ -5,28 +5,46 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { MotionConfig } from "framer-motion";
-import { AuthGuard } from "lemma-sdk/react";
-import { lemmaClient, demoState } from "@/lib/lemma/client";
+import { demoState, auth } from "@/lib/firebase/client";
+import { onAuthStateChanged } from "firebase/auth";
+
+export const AuthContext = React.createContext<{ session: any; user: any; loading: boolean }>({ session: null, user: null, loading: true });
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [session, setSession] = React.useState<any>(null);
+  const [user, setUser] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      // Firebase doesn't use a 'session' object exactly like Supabase,
+      // but we can pass currentUser as session or just rely on user.
+      setSession(currentUser);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ session, user, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
 
 export function Providers({ children, ...props }: React.ComponentProps<typeof NextThemesProvider>) {
   const [queryClient] = React.useState(() => new QueryClient());
 
-  // In demo mode, we might want to bypass AuthGuard or let it render.
-  // The simplest integration that preserves existing functionality is to wrap children,
-  // but if Demo Mode is enabled, we could skip AuthGuard to allow offline fallback.
-  // "Keep Demo Mode available as an offline fallback, but only after authentication or when the backend is unavailable."
-  // For now, we wrap AuthGuard if not in demo mode. If in demo mode, we render children directly.
-  
   const content = React.useMemo(() => {
-    // We defer the demoState check to avoid hydration mismatch if possible,
-    // but demoState.enabled checks cookies/env sync so it's relatively safe.
     if (demoState.enabled) {
       return children;
     }
     return (
-      <AuthGuard client={lemmaClient}>
+      <AuthProvider>
         {children}
-      </AuthGuard>
+      </AuthProvider>
     );
   }, [children]);
 

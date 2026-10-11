@@ -1,5 +1,5 @@
 import { Bot, Database, Cpu, Clock } from "lucide-react";
-import { demoState } from "@/lib/lemma/client";
+import { demoState } from "@/lib/firebase/client";
 
 interface FeatureHeaderProps {
   title: string;

@@ -14,6 +14,7 @@ class CalculateJobMatchInput(BaseModel):
 
 class CalculateJobMatchResult(BaseModel):
     match_score: int
+    matched_skills: List[str]
     missing_skills: List[str]
     skill_coverage: int
     keyword_coverage: int
@@ -214,6 +215,7 @@ async def calculate_job_match(ctx: FunctionContext, data: CalculateJobMatchInput
 
     return CalculateJobMatchResult(
         match_score=match_score,
+        matched_skills=matched_skills,
         missing_skills=missing_skills,
         skill_coverage=int(round(coverage)),
         keyword_coverage=int(round(coverage)),

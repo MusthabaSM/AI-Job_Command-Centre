@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { lemmaClient } from './client';
+import { db } from './client';
+import { collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { toast } from 'sonner';
 
 export const useUploadResume = () => {
   const queryClient = useQueryClient();
@@ -7,7 +9,7 @@ export const useUploadResume = () => {
   return useMutation({
     mutationFn: async (resumeData: Record<string, unknown>) => {
       // Direct insertion into the resumes table
-      const record = await lemmaClient.records.create('resumes', resumeData);
+      const record = await (async () => { const ref = await addDoc(collection(db, 'resumes'), resumeData); const snap = await getDoc(ref); return { id: ref.id, ...snap.data() as any }; })();
       return record;
     },
     onSuccess: () => {
@@ -21,7 +23,7 @@ export const useUpdateApplicationStatus = () => {
 
   return useMutation({
     mutationFn: async ({ id, status }: { id: string, status: string }) => {
-      const record = await lemmaClient.records.update('applications', id, { status });
+      const record = await (async () => { const r = doc(db, 'applications', id); await updateDoc(r, { status }); const snap = await getDoc(r); return { id: r.id, ...snap.data() as any }; })();
       return record;
     },
     onSuccess: () => {

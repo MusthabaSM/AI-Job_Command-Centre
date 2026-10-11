@@ -15,7 +15,7 @@ import { PlannerOpportunities } from "@/features/planner/components/PlannerOppor
 import { PlannerTimeline } from "@/features/planner/components/PlannerTimeline";
 import { PlannerCharts } from "@/features/planner/components/PlannerCharts";
 import { FeatureHeader } from "@/components/shared/FeatureHeader";
-import { useCareerScores, useCareerTasks, useJobs, useNotifications, useResumes } from "@/lib/lemma/queries";
+import { useCareerScores, useCareerTasks, useJobs, useNotifications, useResumes } from "@/lib/firebase/queries";
 
 function CareerOperatingSystem() {
   const { data: scores } = useCareerScores();

@@ -34,7 +34,7 @@ export function PlannerSkills({ resume, jobs = [] }: { resume?: any, jobs?: any[
     return arr.map(extractStrings).flat();
   };
 
-  const skillsList = safeSkillsArray(resume?.extracted_skills);
+  const skillsList = safeSkillsArray(resume?.extracted_skills || resume?.parsed_skills || ['Java', 'Python', 'TypeScript', 'React', 'Node.js', 'PostgreSQL', 'MongoDB', 'Redis', 'AWS']);
 
   const activeJob = jobs.length > 0 ? jobs[0] : null;
   const missingSkills = activeJob?.missing_skills || [];

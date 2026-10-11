@@ -14,7 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "./Sidebar"; // Will inject mobile version logic soon
-import { useNotifications } from "@/lib/lemma/queries";
+import { useNotifications } from "@/lib/firebase/queries";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function Topbar() {
